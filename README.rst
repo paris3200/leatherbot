@@ -1,19 +1,22 @@
-leatherbot
-==========
+# leatherbot
+
 
 A simple bot to help moderate a reddit subreddit.
 
-Usage
------
+## Usage
+    
 
     $leatherbot
 
-Installation
-------------
+## Installation
+
+Leatherbot makes use of PRAW.  In order for leatherbot to work you must configure PRAW.  
 
 Configure PRAW:  https://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html
 
 ## Configure leatherbot 
+
+The config settings can be found in leatherbot/leatherbot.py
 
 ### Edit leatherbot/leatherbot.py ###
 
@@ -32,17 +35,3 @@ Run Setup
     $python setup.py
 
 
-
-Requirements
-^^^^^^^^^^^^
-
-Compatibility
--------------
-
-Licence
--------
-
-Authors
--------
-
-`leatherbot` was written by `Jason Paris <paris3200@gmail.com>`_.
