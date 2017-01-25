@@ -14,10 +14,31 @@ A simple bot to help moderate a reddit subreddit.
 Usage
 -----
 
+    $leatherbot
+
 Installation
 ------------
 
 Configure PRAW:  https://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html
+
+Configure leatherbot
+
+    Edit leatherbot/leatherbot.py
+
+    """
+    Config Settings
+    sub: The subreddit being moded.
+    bot: Name of the bot user
+    grace_period: Time in minutes to delete post that don't follow the rules
+    """
+    sub = "leathertesting"
+    bot = "leathercraft_mod"
+    grace_period = 60
+
+Run Setup
+
+    $python setup.py
+
 
 
 Requirements
