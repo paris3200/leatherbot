@@ -13,7 +13,7 @@ Installation
 
 Configure PRAW:  https://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html
 
-## Configure leatherbot ##
+## Configure leatherbot 
 
 ### Edit leatherbot/leatherbot.py ###
 
