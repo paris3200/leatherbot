@@ -9,8 +9,9 @@ sub: The subreddit being moded.
 bot: Name of the bot user
 grace_period: Time in minutes to delete post that don't follow the rules
 """
-sub = "leathertesting"
-bot = "leathercraft_mod"
+
+sub = "Leathercraft"
+bot = "leathercraft_automod"
 grace_period = 60
 
 reddit = praw.Reddit('bot1')
@@ -89,6 +90,7 @@ def main():
         print("Title: ", submission.title)
         print("Author: ", submission.author)
         print("Flair: ", submission.link_flair_text)
+        print("Domain: ", submission.domain)
 
         if submission.link_flair_text is None:
             flair = False
@@ -117,6 +119,18 @@ def main():
                 comment(submission, "both")
             elif author_comment is True and auto_mod is True and flair is True:
                 print("Flair & Comment Detected - Delete warning")
+                mod_comment.delete()
+            elif auto_mod is False and flair is False:
+                print("Warning - No Flair")
+                comment(submission, "flair")
+        else:
+            for top_level_comment in submission.comments:
+                if top_level_comment.author == bot:
+                    auto_mod = True
+                    mod_comment = top_level_comment
+
+            if auto_mod is True and flair is True:
+                print("Flair Detected - Delete warning")
                 mod_comment.delete()
             elif auto_mod is False and flair is False:
                 print("Warning - No Flair")
