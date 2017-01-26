@@ -88,7 +88,6 @@ def comment(submission, reply):
 def main():
     for submission in subreddit.new(limit=10):
         print("Title: ", submission.title)
-        print("Author: ", submission.author)
         print("Flair: ", submission.link_flair_text)
         print("Domain: ", submission.domain)
 
