@@ -38,46 +38,46 @@ def delete_submission(submission):
 
 def comment(submission, reply):
     if reply == "details":
-        c = submission.reply("Let's be honest, photo-only posts are a drag. \
-                             We want details! Even if you've spent a lot of \
-                             time writing a description on Imgur, etc. please \
-                             take a moment and leave a top comment with a few \
-                             details. It should include what you made, what you\
-                             made it out of, and any other pertinent details \
-                             that will help the viewer understand what they're \
-                             looking at.\
-                             **Photo only posts without an OP comment will be\
-                             automatically deleted after 1 hour.** ")
+        c = submission.reply("""Let's be honest, photo-only posts are a drag.
+                             We want details! Even if you've spent a lot of
+                             time writing a description on Imgur, etc. please
+                             take a moment and leave a top comment with a few
+                             details. It should include what you made, what you
+                             made it out of, and any other pertinent details
+                             that will help the viewer understand what they're
+                             looking at.
+                             \n\n
+                             **Photo only posts without an OP comment will be
+                             automatically deleted after 1 hour.** """)
 
     elif reply == "flair":
-        c = submission.reply("/r/leathercraft requires you to flair your post! \
-                             This comment will be automatically deleted once \
-                             flair has been added. To add flair to your post, \
-                             open it and click the button labeled flair beneath\
-                             your title. From the menu, select the most \
-                             appropriate category, and then hit save. \
-                             You do not need to delete or resubmit your post!")
+        c = submission.reply("""/r/leathercraft requires you to flair your post!
+                             This comment will be automatically deleted once
+                             flair has been added. To add flair to your post,
+                             open it and click the button labeled flair beneath
+                             your title. From the menu, select the most
+                             appropriate category, and then hit save. You
+                             do not need to delete or resubmit your post!""")
     elif reply == "both":
-        c = submission.reply("Congratulations on your post! Remember, \
-                             /r/leathercraft requires you to flair your post! \
-                             This comment will be automatically deleted once \
-                             flair has been added. If you haven't assigned \
-                             flair yet, open it and click the button labeled \
-                             flair beneath your title. From the menu, select \
-                             the most appropriate category, and then hit save. \
-                             You do not need to delete or resubmit your post! \
-                             /n \
-                             And while we're on the topic, let's be honest-- \
-                             photo-only posts are a drag. We want details! \
-                             Even if you've spent a lot of time writing a \
-                             description on Imgur, etc. please take a moment \
-                             and leave a top comment with a few details. It \
-                             should include what you made, what you made it out\
-                             of, and any other pertinent details that will help\
-                             the viewer understand what they're looking at. \
-                             /n \
-                             **Photo only posts without an OP comment will be \
-                             automatically deleted after an hour.**")
+        c = submission.reply("""Congratulations on your post! Remember,
+                             /r/leathercraft requires you to flair your post!
+                             This comment will be automatically deleted once
+                             flair has been added. If you haven't assigned
+                             flair yet, open it and click the button labeled
+                             flair beneath your title. From the menu, select
+                             the most appropriate category, and then hit save.
+                             You do not need to delete or resubmit your post!
+                             /n/n
+                             And while we're on the topic, let's be honest--
+                             photo-only posts are a drag. We want details!
+                             Even if you've spent a lot of time writing a
+                             description on Imgur, etc. please take a moment
+                             and leave a top comment with a few details. It
+                             should include what you made, what you made it out
+                             of, and any other pertinent details that will help
+                             the viewer understand what they're looking at./n/n
+                             **Photo only posts without an OP comment will be
+                             automatically deleted after an hour.**""")
 
     else:
         print("Error:  Comment type not found.")
