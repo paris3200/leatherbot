@@ -45,8 +45,7 @@ def comment(submission, reply):
                              details. It should include what you made, what you
                              made it out of, and any other pertinent details
                              that will help the viewer understand what they're
-                             looking at.
-                             \n\n
+                             looking at.  \n\n
                              **Photo only posts without an OP comment will be
                              automatically deleted after 1 hour.** """)
 
@@ -67,7 +66,7 @@ def comment(submission, reply):
                              flair beneath your title. From the menu, select
                              the most appropriate category, and then hit save.
                              You do not need to delete or resubmit your post!
-                             /n/n
+                               /n/n
                              And while we're on the topic, let's be honest--
                              photo-only posts are a drag. We want details!
                              Even if you've spent a lot of time writing a
