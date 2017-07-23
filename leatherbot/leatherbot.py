@@ -2,6 +2,7 @@
 
 import praw
 import time
+import logging
 
 """
 Config Settings
@@ -14,8 +15,17 @@ sub = "Leathercraft"
 bot = "leathercraft_automod"
 grace_period = 60
 
+# Setup logger
+log_format = "%(Levelname)s %(asctime)s - %(message)s"
+logging.basicConfig(filename = "moderation.log",
+                    level = logging.DEBUG,
+                    format = log_format)
+logger = logging.getLogger()
+
 # Authentication details setup in PRAW
 reddit = praw.Reddit('bot1')
+
+
 
 subreddit = reddit.subreddit(sub)
 current_time = int(time.time())
@@ -47,8 +57,7 @@ def comment(submission, reply):
                              This comment will be automatically deleted once
                              flair has been added. To add flair to your post,
                              open it and click the button labeled flair beneath
-                             your title. From the menu, select the most
-                             appropriate category, and then hit save. You
+                             your title. From the menu, select the most appropriate category, and then hit save. You
                              do not need to delete or resubmit your post!""")
     elif reply == "both":
         c = submission.reply(
@@ -60,7 +69,7 @@ the most appropriate category, and then hit save.  You do not need to delete or 
 And while we're on the topic, let's be honest-- photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a
 description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out
 of, and any other pertinent details that will help the viewer understand what they're looking at.
-                             
+
 
 **Photo only posts without an OP TOP COMMENT  will be automatically deleted after an hour.**""")
 
@@ -71,10 +80,8 @@ of, and any other pertinent details that will help the viewer understand what th
 
 
 def main():
-    for submission in subreddit.new(limit=20):
-        print("Title: ", submission.title)
-        print("Flair: ", submission.link_flair_text)
-        print("Domain: ", submission.domain)
+    for submission in subreddit.new(limit=1):
+        logger.debug("Title:  %(submission.title)s")
 
         if submission.link_flair_text is None:
             flair = False
@@ -93,19 +100,21 @@ def main():
 
             age = (current_time - int(submission.created_utc)) / 60
             if author_comment is False and age > grace_period:
+                logger.info("%(submission.title)s - Delete Submission")
                 print("Delete Submission")
                 delete_submission(submission)
             elif author_comment is False and auto_mod is False and flair is True:
-                print("Warning - No description")
+                logger.info("%(submission.title)s - Warning - No Description")
                 comment(submission, "details")
             elif author_comment is False and auto_mod is False and flair is False:
-                print("Warning - No description or flair")
+                logger.info("%(submission.title)s, \
+                            - Warning - No Description or Flair")
                 comment(submission, "both")
             elif author_comment is True and auto_mod is True and flair is True:
-                print("Flair & Comment Detected - Delete warning")
+                logger.info("%(submission.title)s - Flair & Comment Detected - Delete Warning")
                 mod_comment.delete()
             elif auto_mod is False and flair is False:
-                print("Warning - No Flair")
+                logger.info("%(submission.title)s - Warning - No Flair")
                 comment(submission, "flair")
         else:
             for top_level_comment in submission.comments:
@@ -114,10 +123,10 @@ def main():
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
-                print("Flair Detected - Delete warning")
+                logger.info("%(submission.title)s - Flair Detected - Delete Warning")
                 mod_comment.delete()
             elif auto_mod is False and flair is False:
-                print("Warning - No Flair")
+                logger.info("%(submission.title)s - Flair Warning")
                 comment(submission, "flair")
 
         print("-------------------------------------\n")
