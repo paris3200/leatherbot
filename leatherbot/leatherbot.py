@@ -15,16 +15,15 @@ sub = "Leathercraft"
 bot = "leathercraft_automod"
 grace_period = 60
 
-# Setup logger
-log_format = "%(levelname)s %(asctime)s - %(message)s"
-logging.basicConfig(filename = "moderation.log",
-                    level = logging.DEBUG,
-                    format = log_format)
-logger = logging.getLogger()
-
 # Authentication details setup in PRAW
 reddit = praw.Reddit('bot1')
 
+# Setup logger
+log_format = "%(levelname)s %(asctime)s - %(message)s"
+logging.basicConfig(filename="moderation.log",
+                    level=logging.INFO,
+                    format=log_format)
+logger = logging.getLogger()
 
 
 subreddit = reddit.subreddit(sub)
@@ -81,7 +80,7 @@ of, and any other pertinent details that will help the viewer understand what th
 
 def main():
     for submission in subreddit.new(limit=1):
-        logger.debug("Title:  %(submission.title)s")
+        logger.debug("Title: %s", (submission.title))
 
         if submission.link_flair_text is None:
             flair = False
