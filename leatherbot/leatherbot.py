@@ -27,13 +27,15 @@ current_time = int(time.time())
 
 
 def message(submission):
+    """ Delete the submission"""
+
     submission.author.message(
         "Post Removal",
         "Your post has been automatically removed for violating \
         /r/leathercraft's Rules and Submissions Guidelines. Please take a \
         moment to familiarize with the rules, flair your post, and make sure \
         to include a top comment describing your project in detail."
-        )
+    )
 
 
 def delete_submission(submission):
@@ -45,7 +47,7 @@ def delete_submission(submission):
 def comment(submission, reply):
     if reply == "details":
         c = submission.reply(
-        """Let's be honest, photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out of, and any other pertinent detailsthat will help the viewer understand what they're looking at.  \n\n  **Photo only posts without an OP comment will be automatically deleted after 1 hour.** """)
+            """Let's be honest, photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out of, and any other pertinent detailsthat will help the viewer understand what they're looking at.  \n\n  **Photo only posts without an OP comment will be automatically deleted after 1 hour.** """)
 
     elif reply == "flair":
         c = submission.reply("""/r/leathercraft requires you to flair your post!
@@ -56,7 +58,7 @@ def comment(submission, reply):
                              do not need to delete or resubmit your post!""")
     elif reply == "both":
         c = submission.reply(
-"""Congratulations on your post! Remember, /r/leathercraft requires you to flair your post! This comment will be automatically deleted once
+            """Congratulations on your post! Remember, /r/leathercraft requires you to flair your post! This comment will be automatically deleted once
 flair has been added. If you haven't assigned flair yet, open it and click the button labeled flair beneath your title. From the menu, select
 the most appropriate category, and then hit save.  You do not need to delete or resubmit your post!
 
@@ -85,6 +87,7 @@ def main():
 
         author_comment = False
         auto_mod = False
+
         if sub not in submission.domain:
             for top_level_comment in submission.comments:
                 if top_level_comment.author == submission.author:
@@ -107,7 +110,8 @@ def main():
                 comment(submission, "both")
 
             elif author_comment is True and auto_mod is True and flair is True:
-                logging.info("%(submission.title)s - Flair & Comment Detected - Delete Warning")
+                logging.info(
+                    "%(submission.title)s - Flair & Comment Detected - Delete Warning")
                 mod_comment.delete()
 
             elif auto_mod is False and flair is False:
@@ -120,7 +124,8 @@ def main():
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
-                logging.info("%(submission.title)s - Flair Detected - Delete Warning")
+                logging.info(
+                    "%(submission.title)s - Flair Detected - Delete Warning")
                 mod_comment.delete()
 
             elif auto_mod is False and flair is False:
@@ -129,4 +134,4 @@ def main():
 
 
 if __name__ == "__main__":
-        main()
+    main()
