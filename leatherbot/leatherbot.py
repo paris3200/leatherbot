@@ -16,7 +16,7 @@ bot = "leathercraft_automod"
 grace_period = 60
 
 # Setup logger
-log_format = "%(Levelname)s %(asctime)s - %(message)s"
+log_format = "%(levelname)s %(asctime)s - %(message)s"
 logging.basicConfig(filename = "moderation.log",
                     level = logging.DEBUG,
                     format = log_format)
