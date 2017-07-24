@@ -19,8 +19,13 @@ grace_period = 60
 reddit = praw.Reddit('bot1')
 
 # Setup logger
-logging.basicConfig(filename='moderation.log', level=logging.INFO,
-                    format='%(asctime)s:%(levelname)s:%(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = '%(asctime)s:%(levelname)s:%(message)s'
+file_handler = logging.FileHandler('moderation.log')
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(formatter)
 
 subreddit = reddit.subreddit(sub)
 current_time = int(time.time())
@@ -39,7 +44,7 @@ def message(submission):
 def delete_submission(submission):
     subreddit.mod.remove(submission)
     message(submission)
-    logging.info("%(submission.title)s - Delete Submission")
+    logger.info("%(submission.title)s - Delete Submission")
 
 
 def comment(submission, reply):
@@ -76,7 +81,7 @@ of, and any other pertinent details that will help the viewer understand what th
 
 def main():
     for submission in subreddit.new(limit=20):
-        logging.debug("Title: %s", (submission.title))
+        logger.debug("Title: %s", (submission.title))
 
         if submission.link_flair_text is None:
             flair = False
@@ -102,16 +107,16 @@ def main():
                 comment(submission, "details")
 
             elif author_comment is False and auto_mod is False and flair is False:
-                logging.info("%(submission.title)s, \
+                logger.info("%(submission.title)s, \
                             - Warning - No Description or Flair")
                 comment(submission, "both")
 
             elif author_comment is True and auto_mod is True and flair is True:
-                logging.info("%(submission.title)s - Flair & Comment Detected - Delete Warning")
+                logger.info("%(submission.title)s - Flair & Comment Detected - Delete Warning")
                 mod_comment.delete()
 
             elif auto_mod is False and flair is False:
-                logging.info("%(submission.title)s - Warning - No Flair")
+                logger.info("%(submission.title)s - Warning - No Flair")
                 comment(submission, "flair")
         else:
             for top_level_comment in submission.comments:
@@ -120,11 +125,11 @@ def main():
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
-                logging.info("%(submission.title)s - Flair Detected - Delete Warning")
+                logger.info("%(submission.title)s - Flair Detected - Delete Warning")
                 mod_comment.delete()
 
             elif auto_mod is False and flair is False:
-                logging.info("%(submission.title)s - Flair Warning")
+                logger.info("%(submission.title)s - Flair Warning")
                 comment(submission, "flair")
 
 
