@@ -21,70 +21,109 @@ reddit = praw.Reddit('bot1')
 # Setup logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler('moderation.log', mode='w')
+file_handler.setLevel(logging.DEBUG)
 
-formatter = '%(asctime)s:%(levelname)s:%(message)s'
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 
-file_handler = logging.FileHandler('moderation.log')
-file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
-
 logger.addHandler(file_handler)
 
 subreddit = reddit.subreddit(sub)
 current_time = int(time.time())
 
+FLAIR_WARNING = """
+### /r/leathercraft requires you to flair your post! ###
+
+&nbsp;
+
+To add flair to your post, open it and click the button labeled flair beneath
+your title. From the menu, select the most appropriate category, and then hit
+save. You do not need to delete or resubmit your post!
+
+&nbsp;
+
+This comment will be automatically deleted once flair has been added.
+"""
+
+DETAIL_WARNING = """
+Let's be honest, photo-only posts are a drag. We want details! Even if you've
+spent a lot of time writing a description on Imgur, etc. please take a moment
+and leave a **top comment** with a few details. It should include what you made,
+what you made it out of, and any other pertinent details that will help the
+viewer understand what they're looking at.
+
+&nbsp;
+
+**Photo only posts without an OP comment will be automatically deleted after
+1 hour.**
+"""
+
+BOTH_WARNING = """
+Congratulations on your post! Remember, /r/leathercraft requires you to flair
+your post! This comment will be automatically deleted once flair has been added.
+If you haven't assigned flair yet, open it and click the button labeled flair
+beneath your title. From the menu, select the most appropriate category, and
+then hit save.  You do not need to delete or resubmit your post!
+
+&nbsp
+
+And while we're on the topic, let's be honest-- photo-only posts are a drag. We
+want details! Even if you've spent a lot of time writing a description on Imgur,
+etc. please take a moment and leave a top comment with a few details. It should
+include what you made, what you made it out of, and any other pertinent details
+that will help the viewer understand what they're looking at.
+
+&nbsp
+
+**Photo only posts without an OP TOP COMMENT  will be automatically deleted
+after an hour.**
+"""
+
+POST_REMOVAL = """
+Your post has been automatically removed for violating /r/leathercraft's Rules
+land Submissions Guidelines. Please take a moment to familiarize with the rules,
+flair your post, and make sure to include a top comment describing your project
+in detail."
+"""
 
 def message(submission):
-    submission.author.message(
-        "Post Removal",
-        "Your post has been automatically removed for violating \
-        /r/leathercraft's Rules and Submissions Guidelines. Please take a \
-        moment to familiarize with the rules, flair your post, and make sure \
-        to include a top comment describing your project in detail."
-        )
-
+    """
+    Publishes a comment to Reddit stating why the post was removed.
+    :param submission: The submission who's author should be messaged.
+    """
+    submission.author.message("Post Removal", POST_REMOVAL)
 
 def delete_submission(submission):
+    """
+    Deletes the submission.
+    :param submission: The Reddit Submission object to de deleted.
+    """
     subreddit.mod.remove(submission)
     message(submission)
-    logger.info("%(submission.title)s - Delete Submission")
+    logger.info("{} - Delete Submission".format(submission.title))
 
 
 def comment(submission, reply):
     if reply == "details":
-        c = submission.reply(
-        """Let's be honest, photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out of, and any other pertinent detailsthat will help the viewer understand what they're looking at.  \n\n  **Photo only posts without an OP comment will be automatically deleted after 1 hour.** """)
-
+        c = submission.reply(DETAIL_WARNING)
+        logger.info("%{} - Warning - No Description".format(submission.title))
     elif reply == "flair":
-        c = submission.reply("""/r/leathercraft requires you to flair your post!
-                             This comment will be automatically deleted once
-                             flair has been added. To add flair to your post,
-                             open it and click the button labeled flair beneath
-                             your title. From the menu, select the most appropriate category, and then hit save. You
-                             do not need to delete or resubmit your post!""")
+        c = submission.reply(FLAIR_WARNING)
+        logger.info("{} - Warning - No Flair".format(submission.title))
     elif reply == "both":
-        c = submission.reply(
-"""Congratulations on your post! Remember, /r/leathercraft requires you to flair your post! This comment will be automatically deleted once
-flair has been added. If you haven't assigned flair yet, open it and click the button labeled flair beneath your title. From the menu, select
-the most appropriate category, and then hit save.  You do not need to delete or resubmit your post!
-
-
-And while we're on the topic, let's be honest-- photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a
-description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out
-of, and any other pertinent details that will help the viewer understand what they're looking at.
-
-
-**Photo only posts without an OP TOP COMMENT  will be automatically deleted after an hour.**""")
-
+        c = submission.reply(BOTH_WARNING)
+        logger.info("{} - Warning - No Description or Flair".format(submission.title))
     else:
-        logging.error("Error:  Comment type not found.")
+        logger.error("Error:  Comment type not found.")
 
+    # Distininguishes the comment as an offical mod comment.
     c.mod.distinguish()
 
 
 def main():
     for submission in subreddit.new(limit=20):
-        logger.debug("Title: %s", (submission.title))
+        logger.debug("Title: {}".format(submission.title))
 
         if submission.link_flair_text is None:
             flair = False
@@ -106,20 +145,16 @@ def main():
                 delete_submission(submission)
 
             elif author_comment is False and auto_mod is False and flair is True:
-                logging.info("%(submission.title)s - Warning - No Description")
                 comment(submission, "details")
 
             elif author_comment is False and auto_mod is False and flair is False:
-                logger.info("%(submission.title)s, \
-                            - Warning - No Description or Flair")
                 comment(submission, "both")
 
             elif author_comment is True and auto_mod is True and flair is True:
-                logger.info("%(submission.title)s - Flair & Comment Detected - Delete Warning")
                 mod_comment.delete()
+                logger.info("{} - Flair & Comment Detected - Delete Warning".format(submission.title))
 
             elif auto_mod is False and flair is False:
-                logger.info("%(submission.title)s - Warning - No Flair")
                 comment(submission, "flair")
         else:
             for top_level_comment in submission.comments:
@@ -128,11 +163,10 @@ def main():
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
-                logger.info("%(submission.title)s - Flair Detected - Delete Warning")
                 mod_comment.delete()
+                logger.info("{} - Flair Detected - Delete Warning".format(submission.title))
 
             elif auto_mod is False and flair is False:
-                logger.info("%(submission.title)s - Flair Warning")
                 comment(submission, "flair")
 
 
