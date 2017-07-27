@@ -35,12 +35,25 @@ current_time = int(time.time())
 FLAIR_WARNING = """
 #### /r/leathercraft requires you to flair your post! ####
 
+<<<<<<< HEAD
 To add flair to your post, open it and click the button labeled flair beneath
 your title. From the menu, select the most appropriate category, and then hit
 save. You do not need to delete or resubmit your post!
 
 This comment will be automatically deleted once flair has been added.
 """
+=======
+def message(submission):
+    """ Delete the submission"""
+
+    submission.author.message(
+        "Post Removal",
+        "Your post has been automatically removed for violating \
+        /r/leathercraft's Rules and Submissions Guidelines. Please take a \
+        moment to familiarize with the rules, flair your post, and make sure \
+        to include a top comment describing your project in detail."
+    )
+>>>>>>> 9533a9dc547fc9195cdfecb6cdee0549b2f7f9d1
 
 DETAIL_WARNING = """
 Let's be honest, photo-only posts are a drag. We want details! Even if you've
@@ -96,14 +109,36 @@ def delete_submission(submission):
 
 def comment(submission, reply):
     if reply == "details":
+<<<<<<< HEAD
         c = submission.reply(DETAIL_WARNING)
         logger.info("%{} - Warning - No Description".format(submission.title))
+=======
+        c = submission.reply(
+            """Let's be honest, photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out of, and any other pertinent detailsthat will help the viewer understand what they're looking at.  \n\n  **Photo only posts without an OP comment will be automatically deleted after 1 hour.** """)
+
+>>>>>>> 9533a9dc547fc9195cdfecb6cdee0549b2f7f9d1
     elif reply == "flair":
         c = submission.reply(FLAIR_WARNING)
         logger.info("{} - Warning - No Flair".format(submission.title))
     elif reply == "both":
+<<<<<<< HEAD
         c = submission.reply(BOTH_WARNING)
         logger.info("{} - Warning - No Description or Flair".format(submission.title))
+=======
+        c = submission.reply(
+            """Congratulations on your post! Remember, /r/leathercraft requires you to flair your post! This comment will be automatically deleted once
+flair has been added. If you haven't assigned flair yet, open it and click the button labeled flair beneath your title. From the menu, select
+the most appropriate category, and then hit save.  You do not need to delete or resubmit your post!
+
+
+And while we're on the topic, let's be honest-- photo-only posts are a drag. We want details! Even if you've spent a lot of time writing a
+description on Imgur, etc. please take a moment and leave a top comment with a few details. It should include what you made, what you made it out
+of, and any other pertinent details that will help the viewer understand what they're looking at.
+
+
+**Photo only posts without an OP TOP COMMENT  will be automatically deleted after an hour.**""")
+
+>>>>>>> 9533a9dc547fc9195cdfecb6cdee0549b2f7f9d1
     else:
         logger.error("Error:  Comment type not found.")
 
@@ -122,6 +157,7 @@ def main():
 
         author_comment = False
         auto_mod = False
+
         if sub not in submission.domain:
             for top_level_comment in submission.comments:
                 if top_level_comment.author == submission.author:
@@ -141,6 +177,11 @@ def main():
                 comment(submission, "both")
 
             elif author_comment is True and auto_mod is True and flair is True:
+<<<<<<< HEAD
+=======
+                logging.info(
+                    "%(submission.title)s - Flair & Comment Detected - Delete Warning")
+>>>>>>> 9533a9dc547fc9195cdfecb6cdee0549b2f7f9d1
                 mod_comment.delete()
                 logger.info("{} - Flair & Comment Detected - Delete Warning".format(submission.title))
 
@@ -153,6 +194,11 @@ def main():
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
+<<<<<<< HEAD
+=======
+                logging.info(
+                    "%(submission.title)s - Flair Detected - Delete Warning")
+>>>>>>> 9533a9dc547fc9195cdfecb6cdee0549b2f7f9d1
                 mod_comment.delete()
                 logger.info("{} - Flair Detected - Delete Warning".format(submission.title))
 
@@ -161,4 +207,4 @@ def main():
 
 
 if __name__ == "__main__":
-        main()
+    main()
