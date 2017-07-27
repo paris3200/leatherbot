@@ -22,7 +22,7 @@ reddit = praw.Reddit('bot1')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler('moderation.log', mode='w')
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 
@@ -33,15 +33,11 @@ subreddit = reddit.subreddit(sub)
 current_time = int(time.time())
 
 FLAIR_WARNING = """
-### /r/leathercraft requires you to flair your post! ###
-
-&nbsp;
+#### /r/leathercraft requires you to flair your post! ####
 
 To add flair to your post, open it and click the button labeled flair beneath
 your title. From the menu, select the most appropriate category, and then hit
 save. You do not need to delete or resubmit your post!
-
-&nbsp;
 
 This comment will be automatically deleted once flair has been added.
 """
@@ -52,8 +48,6 @@ spent a lot of time writing a description on Imgur, etc. please take a moment
 and leave a **top comment** with a few details. It should include what you made,
 what you made it out of, and any other pertinent details that will help the
 viewer understand what they're looking at.
-
-&nbsp;
 
 **Photo only posts without an OP comment will be automatically deleted after
 1 hour.**
@@ -66,15 +60,11 @@ If you haven't assigned flair yet, open it and click the button labeled flair
 beneath your title. From the menu, select the most appropriate category, and
 then hit save.  You do not need to delete or resubmit your post!
 
-&nbsp
-
 And while we're on the topic, let's be honest-- photo-only posts are a drag. We
 want details! Even if you've spent a lot of time writing a description on Imgur,
 etc. please take a moment and leave a top comment with a few details. It should
 include what you made, what you made it out of, and any other pertinent details
 that will help the viewer understand what they're looking at.
-
-&nbsp
 
 **Photo only posts without an OP TOP COMMENT  will be automatically deleted
 after an hour.**
