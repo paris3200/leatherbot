@@ -89,7 +89,7 @@ def delete_submission(submission):
     Deletes the submission.
     :param submission: The Reddit Submission object to de deleted.
     """
-    submission.mod.remove(submission)
+    submission.mod.remove()
     message(submission)
     logger.info("{} - Delete Submission".format(submission.title))
 
