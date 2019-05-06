@@ -1,19 +1,18 @@
 #!/usr/bin/env python
-
-import praw
 import time
 import logging
+import praw
 
 """
 Config Settings
-sub: The subreddit being moded.
-bot: Name of the bot user
-grace_period: Time in minutes to delete post that don't follow the rules
+SUB: The subreddit being moded.
+BOT: Name of the bot user
+GRACE_PERIOD: Time in minutes to delete post that don't follow the rules
 """
 
-sub = "Leathercraft"
-bot = "leathercraft_automod"
-grace_period = 60
+SUB = "Leathercraft"
+BOT = "leathercraft_automod"
+GRACE_PERIOD = 60
 
 # Authentication details setup in PRAW
 reddit = praw.Reddit('bot1')
@@ -29,7 +28,7 @@ formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-subreddit = reddit.subreddit(sub)
+subreddit = reddit.subreddit(SUB)
 current_time = int(time.time())
 
 FLAIR_WARNING = """
@@ -77,12 +76,14 @@ flair your post, and make sure to include a top comment describing your project
 in detail."
 """
 
+
 def message(submission):
     """
     Publishes a comment to Reddit stating why the post was removed.
     :param submission: The submission who's author should be messaged.
     """
     submission.author.message("Post Removal", POST_REMOVAL)
+
 
 def delete_submission(submission):
     """
@@ -96,19 +97,20 @@ def delete_submission(submission):
 
 def comment(submission, reply):
     if reply == "details":
-        c = submission.reply(DETAIL_WARNING)
+        comment = submission.reply(DETAIL_WARNING)
         logger.info("%{} - Warning - No Description".format(submission.title))
     elif reply == "flair":
-        c = submission.reply(FLAIR_WARNING)
+        comment = submission.reply(FLAIR_WARNING)
         logger.info("{} - Warning - No Flair".format(submission.title))
     elif reply == "both":
-        c = submission.reply(BOTH_WARNING)
-        logger.info("{} - Warning - No Description or Flair".format(submission.title))
+        comment = submission.reply(BOTH_WARNING)
+        logger.info("{} - Warning - No Description or Flair".format(
+            submission.title))
     else:
         logger.error("Error:  Comment type not found.")
 
     # Distininguishes the comment as an offical mod comment.
-    c.mod.distinguish()
+    comment.mod.distinguish()
 
 
 def main():
@@ -123,16 +125,16 @@ def main():
         author_comment = False
         auto_mod = False
 
-        if sub not in submission.domain:
+        if SUB not in submission.domain:
             for top_level_comment in submission.comments:
                 if top_level_comment.author == submission.author:
                     author_comment = True
-                if top_level_comment.author == bot:
+                if top_level_comment.author == BOT:
                     auto_mod = True
                     mod_comment = top_level_comment
 
             age = (current_time - int(submission.created_utc)) / 60
-            if author_comment is False and age > grace_period:
+            if author_comment is False and age > GRACE_PERIOD:
                 delete_submission(submission)
 
             elif author_comment is False and auto_mod is False and flair is True:
@@ -149,13 +151,14 @@ def main():
                 comment(submission, "flair")
         else:
             for top_level_comment in submission.comments:
-                if top_level_comment.author == bot:
+                if top_level_comment.author == BOT:
                     auto_mod = True
                     mod_comment = top_level_comment
 
             if auto_mod is True and flair is True:
                 mod_comment.delete()
-                logger.info("{} - Flair Detected - Delete Warning".format(submission.title))
+                logger.info("{} - Flair Detected - Delete Warning".format(
+                    submission.title))
 
             elif auto_mod is False and flair is False:
                 comment(submission, "flair")
