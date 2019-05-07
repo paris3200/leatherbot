@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import time
 import logging
+import time
+
 import praw
 
 """
@@ -10,12 +11,12 @@ BOT: Name of the bot user
 GRACE_PERIOD: Time in minutes to delete post that don't follow the rules
 """
 
-SUB = "Leathercraft"
+SUB = "leathertesting"
 BOT = "leathercraft_automod"
 GRACE_PERIOD = 60
 
 # Authentication details setup in PRAW
-reddit = praw.Reddit('bot1')
+reddit = praw.Reddit('bot2')
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -69,29 +70,32 @@ that will help the viewer understand what they're looking at.
 after an hour.**
 """
 
-POST_REMOVAL = """
+NO_COMMENT = """
 Your post has been automatically removed for violating /r/leathercraft's Rules
-land Submissions Guidelines. Please take a moment to familiarize with the rules,
+and Submissions Guidelines. Please take a moment to familiarize with the rules,
 flair your post, and make sure to include a top comment describing your project
 in detail."
 """
 
+QUESTION_POST = """
+All questions, not concerning a specific project someone posted, belong in the weekly Help and Questions Post.
 
-def message(submission):
-    """
-    Publishes a comment to Reddit stating why the post was removed.
-    :param submission: The submission who's author should be messaged.
-    """
-    submission.author.message("Post Removal", POST_REMOVAL)
+You can find the Weekly post at the pinned to the top of the subreddit.
+"""
 
 
-def delete_submission(submission):
+def delete_submission(submission, removal_reason):
     """
     Deletes the submission.
     :param submission: The Reddit Submission object to de deleted.
+    :param removal_reason:  The reason that post has been removed.
     """
     submission.mod.remove()
-    message(submission)
+    if removal_reason is NO_COMMENT:
+        reason = "No Description"
+    elif removal_reason is QUESTION_POST:
+        reason = "No Question Posts"
+    submission.mod.send_removal_message(removal_reason, reason, 'private')
     logger.info("{} - Delete Submission".format(submission.title))
 
 
@@ -120,11 +124,15 @@ def main():
         if submission.link_flair_text is None:
             flair = False
         else:
+            if submission.link_flair_text == "Question":
+                delete_submission(submission, QUESTION_POST)
             flair = True
+            
 
         author_comment = False
         auto_mod = False
 
+        # Link Post Checks
         if SUB not in submission.domain:
             for top_level_comment in submission.comments:
                 if top_level_comment.author == submission.author:
@@ -135,7 +143,7 @@ def main():
 
             age = (current_time - int(submission.created_utc)) / 60
             if author_comment is False and age > GRACE_PERIOD:
-                delete_submission(submission)
+                delete_submission(submission, NO_COMMENT)
 
             elif author_comment is False and auto_mod is False and flair is True:
                 comment(submission, "details")
