@@ -11,7 +11,7 @@ BOT: Name of the bot user
 GRACE_PERIOD: Time in minutes to delete post that don't follow the rules
 """
 
-SUB = "leathercraft"
+SUB = "leathertesting"
 BOT = "leathercraft_automod"
 GRACE_PERIOD = 60
 
@@ -78,24 +78,26 @@ in detail."
 """
 
 QUESTION_POST = """
+Your post has been automatically removed for violating /r/leathercraft's Rules.
+
 All questions, not concerning a specific project someone posted, belong in the weekly Help and Questions Post.
 
 You can find the Weekly post at the pinned to the top of the subreddit.
 """
 
-
 def delete_submission(submission, removal_reason):
     """
-    Deletes the submission.
-    :param submission: The Reddit Submission object to de deleted.
+    Deletes the submission and messages the submission author.
+    :param submission: The Reddit Submission object to be deleted.
     :param removal_reason:  The reason that post has been removed.
     """
-    submission.mod.remove()
     if removal_reason is NO_COMMENT:
-        reason = "No Description"
+        reason = "Rule 3"
     elif removal_reason is QUESTION_POST:
-        reason = "No Question Posts"
-    submission.mod.send_removal_message(removal_reason, reason, 'private')
+        reason = "Rule 9"
+
+    submission.mod.remove()
+    submission.mod.send_removal_message(removal_reason, reason, type='private')
     logger.info("{} - Delete Submission".format(submission.title))
 
 
@@ -115,7 +117,6 @@ def comment(submission, reply):
 
     # Distininguishes the comment as an offical mod comment.
     comment.mod.distinguish()
-
 
 def main():
     for submission in subreddit.new(limit=20):
@@ -162,7 +163,7 @@ def main():
                 if top_level_comment.author == BOT:
                     auto_mod = True
                     mod_comment = top_level_comment
-
+            
             if auto_mod is True and flair is True:
                 mod_comment.delete()
                 logger.info("{} - Flair Detected - Delete Warning".format(
