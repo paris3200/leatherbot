@@ -11,7 +11,7 @@ BOT: Name of the bot user
 GRACE_PERIOD: Time in minutes to delete post that don't follow the rules
 """
 
-SUB = "leathertesting"
+SUB = "leathercraft"
 BOT = "leathercraft_automod"
 GRACE_PERIOD = 60
 
@@ -133,7 +133,7 @@ def main():
         auto_mod = False
 
         # Link Post Checks
-        if SUB not in submission.domain:
+        if not submission.is_self:
             for top_level_comment in submission.comments:
                 if top_level_comment.author == submission.author:
                     author_comment = True
