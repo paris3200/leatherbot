@@ -75,6 +75,9 @@ Your post has been automatically removed for violating /r/leathercraft's Rules
 and Submissions Guidelines. Please take a moment to familiarize with the rules,
 flair your post, and make sure to include a top comment describing your project
 in detail."
+
+If you have any quesitons please message the mod team.  This is a bot and
+replies are not monitored.  
 """
 
 QUESTION_POST = """
@@ -83,7 +86,17 @@ Your post has been automatically removed for violating /r/leathercraft's Rules.
 All questions, not concerning a specific project someone posted, belong in the weekly Help and Questions Post.
 
 You can find the Weekly post at the pinned to the top of the subreddit.
+
+If you have any quesitons please message the mod team.  This is a bot and
+replies are not monitored.  
 """
+
+def message(submission, message):
+    """
+    Publishes a comment to Reddit stating why the post was removed.
+    :param submission: The submission who's author should be messaged.
+    """
+    submission.author.message("Post Removed", message)
 
 def delete_submission(submission, removal_reason):
     """
@@ -91,13 +104,8 @@ def delete_submission(submission, removal_reason):
     :param submission: The Reddit Submission object to be deleted.
     :param removal_reason:  The reason that post has been removed.
     """
-    if removal_reason is NO_COMMENT:
-        reason = "Rule 3"
-    elif removal_reason is QUESTION_POST:
-        reason = "Rule 9"
-
     submission.mod.remove()
-    submission.mod.send_removal_message(removal_reason, reason, type='private')
+    message(submission, removal_reason)
     logger.info("{} - Delete Submission".format(submission.title))
 
 
